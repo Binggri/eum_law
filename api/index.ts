@@ -28,7 +28,7 @@ app.get("/api", async (req: Request, res: Response) => {
             uname: uname ? String(uname) : "", // uname이 없을 경우 빈 문자열 처리
         });
 
-        // ✅ 최종 API 요청 URL 출력
+        // ✅ 최종 API 요청 URL 생성 및 로그 출력
         const requestURL = `${api_url}${requestParams.toString()}`;
         console.log(`🔍 실제 API 요청 URL: ${requestURL}`);
 
@@ -50,6 +50,10 @@ app.get("/api", async (req: Request, res: Response) => {
     }
 });
 
-app.listen(3000, () => {
-    console.log("서버가 3000번 포트에서 실행 중입니다.");
+// ✅ 서버 실행 시, API 테스트 URL을 출력하여 확인
+const PORT = 3000;
+app.listen(PORT, () => {
+    const testURL = `http://127.0.0.1:${PORT}/api?areaCd=11140&type=S&uname=주거지역`;
+    console.log(`🚀 서버가 ${PORT}번 포트에서 실행 중입니다.`);
+    console.log(`🔗 테스트 URL: ${testURL}`);
 });
