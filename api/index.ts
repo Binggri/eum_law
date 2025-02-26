@@ -1,4 +1,9 @@
-﻿app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
+﻿import express, { Request, Response, Application } from "express";
+import axios from "axios";
+
+const app: Application = express();
+
+app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
     console.log("✅ API 요청이 들어왔습니다:", req.query);
 
     try {
@@ -12,17 +17,17 @@
 
         console.log(`✅ 요청 처리 중... (areaCd: ${areaCd}, type: ${type}, uname: ${uname})`);
 
-        const api_url = "https://api.eum.go.kr/web/Rest/OP/searchZone";
+        const api_url = "https://api.eum.go.kr/web/Rest/OP/searchZone?";
         const requestParams = {
             id: "ybg",
             key: "Wj0PNO4WCAAsndHQkqLz5A==",
             areaCd,
             type,
-            uname: uname || "", // uname이 없을 경우 빈 문자열 전달
+            uname: uname ? String(uname) : "", // `uname`이 없으면 빈 문자열 처리
         };
 
         // ✅ **🔍 실제 API 요청 URL을 콘솔에 출력**
-        const requestURL = `${api_url}?id=${requestParams.id}&key=${requestParams.key}&areaCd=${requestParams.areaCd}&type=${requestParams.type}&uname=${requestParams.uname}`;
+        const requestURL = `${api_url}id=${requestParams.id}&key=${requestParams.key}&areaCd=${requestParams.areaCd}&type=${requestParams.type}&uname=${requestParams.uname}`;
         console.log(`🔍 실제 API 요청 URL: ${requestURL}`);
 
         const response = await axios.get(api_url, {
@@ -45,4 +50,8 @@
         return;
     }
 });
-"// Force update" 
+
+// ✅ 서버 실행
+app.listen(3000, () => {
+    console.log("🚀 서버가 3000번 포트에서 실행 중입니다.");
+});
