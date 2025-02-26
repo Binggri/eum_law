@@ -1,10 +1,9 @@
 ﻿import express, { Request, Response, Application } from "express";
 import axios from "axios";
-import qs from "querystring"; // ✅ 추가
 
 const app: Application = express();
 
-app.get("/api/eum", async (req: Request, res: Response) => {
+app.get("/api", async (req: Request, res: Response) => {
     console.log("✅ API 요청이 들어왔습니다:", req.query);
 
     try {
@@ -18,19 +17,19 @@ app.get("/api/eum", async (req: Request, res: Response) => {
 
         console.log(`✅ 요청 처리 중... (areaCd: ${areaCd}, type: ${type}, uname: ${uname})`);
 
-        const api_url = "https://api.eum.go.kr/web/Rest/OP/searchZone";
+        const api_url = "https://api.eum.go.kr/web/Rest/OP/searchZone?";
 
-        // ✅ `qs`를 사용하여 자동으로 URL 인코딩된 쿼리스트링 생성
-        const queryString = qs.stringify({
+        // ✅ URLSearchParams를 사용하여 쿼리스트링 생성 (자동 인코딩)
+        const requestParams = new URLSearchParams({
             id: "ybg",
             key: "Wj0PNO4WCAAsndHQkqLz5A==",
-            areaCd,
-            type,
-            uname: uname || "", // ❗ uname이 없을 경우 빈 문자열 전달
+            areaCd: String(areaCd),
+            type: String(type),
+            uname: uname ? String(uname) : "", // uname이 없을 경우 빈 문자열 처리
         });
 
         // ✅ 최종 API 요청 URL 출력
-        const requestURL = `${api_url}?${queryString}`;
+        const requestURL = `${api_url}${requestParams.toString()}`;
         console.log(`🔍 실제 API 요청 URL: ${requestURL}`);
 
         const response = await axios.get(requestURL, {
