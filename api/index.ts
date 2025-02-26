@@ -17,28 +17,29 @@ app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
 
         console.log(`✅ 요청 처리 중... (areaCd: ${areaCd}, type: ${type}, uname: ${uname})`);
 
-        const api_url = "https://api.eum.go.kr/web/Rest/OP/searchZone?";
+        const api_url = "https://api.eum.go.kr/web/Rest/OP/searchZone";
         const requestParams = {
             id: "ybg",
             key: "Wj0PNO4WCAAsndHQkqLz5A==",
             areaCd,
             type,
-            uname: uname ? String(uname) : "", // `uname`이 없으면 빈 문자열 처리
+            uname: uname || "", // `uname`이 없을 경우 빈 문자열 전달
         };
 
-        // ✅ **🔍 실제 API 요청 URL을 콘솔에 출력**
-        const requestURL = `${api_url}id=${requestParams.id}&key=${requestParams.key}&areaCd=${requestParams.areaCd}&type=${requestParams.type}&uname=${requestParams.uname}`;
+        // ✅ **🔍 실제 API 요청 URL을 콘솔에 출력 (디버깅용)**
+        const requestURL = `${api_url}?id=${requestParams.id}&key=${requestParams.key}&areaCd=${requestParams.areaCd}&type=${requestParams.type}&uname=${requestParams.uname}`;
         console.log(`🔍 실제 API 요청 URL: ${requestURL}`);
 
+        // ✅ **axios로 API 요청**
         const response = await axios.get(api_url, {
             params: requestParams,
             responseType: "arraybuffer",
         });
 
-        // ✅ 응답을 UTF-8로 변환하여 한글 깨짐 방지
+        // ✅ **응답을 UTF-8로 변환하여 한글 깨짐 방지**
         const decodedData = Buffer.from(response.data, "binary").toString("utf-8");
 
-        // ✅ 서버에서 UTF-8 인코딩을 명확하게 설정
+        // ✅ **Vercel 서버에서 UTF-8 인코딩을 명확하게 설정**
         res.setHeader("Content-Type", "application/xml; charset=utf-8");
 
         console.log("✅ 응답 성공!");
