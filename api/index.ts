@@ -44,14 +44,24 @@ app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
         const decodedData = Buffer.from(response.data, "binary").toString("utf-8");
 
         // ✅ **Vercel 서버에서 UTF-8 인코딩을 명확하게 설정**
-        res.setHeader("Content-Type", "application/xml; charset=utf-8");
+        res.setHeader("Content-Type", "application/json; charset=utf-8");
 
         console.log("✅ 응답 성공!");
-        res.send(decodedData);
+
+        // ✅ 클라이언트에서도 `requestURL` 확인 가능하도록 응답 JSON에 포함
+        res.json({
+            success: true,
+            requestURL,  // 🔍 **실제 요청 URL 포함**
+            response: decodedData,  // API 응답 본문
+        });
+
         return;
     } catch (error: any) {
         console.error("❌ API 요청 중 오류 발생:", error.response?.status || error.message);
-        res.status(error.response?.status || 500).send("API 요청 실패");
+        res.status(error.response?.status || 500).json({
+            success: false,
+            error: error.response?.status || "API 요청 실패",
+        });
         return;
     }
 });
