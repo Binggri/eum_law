@@ -1,5 +1,6 @@
 ﻿import express, { Request, Response, Application } from "express";
 import axios from "axios";
+import querystring from "querystring"; // ✅ URL 인코딩을 위한 모듈 추가
 
 const app: Application = express();
 
@@ -17,7 +18,9 @@ app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
 
         console.log(`✅ 요청 처리 중... (areaCd: ${areaCd}, type: ${type}, uname: ${uname})`);
 
-        const api_url = "https://api.eum.go.kr/web/Rest/OP/searchZone";
+        const api_url = "https://api.eum.go.kr/web/Rest/OP/searchZone"; // ✅ `?` 제거
+
+        // ✅ 파라미터 객체 생성
         const requestParams = {
             id: "ybg",
             key: "Wj0PNO4WCAAsndHQkqLz5A==",
@@ -26,13 +29,14 @@ app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
             uname: uname || "", // `uname`이 없을 경우 빈 문자열 전달
         };
 
-        // ✅ **🔍 실제 API 요청 URL을 콘솔에 출력 (디버깅용)**
-        const requestURL = `${api_url}?id=${requestParams.id}&key=${requestParams.key}&areaCd=${requestParams.areaCd}&type=${requestParams.type}&uname=${requestParams.uname}`;
+        // ✅ **🔍 실제 API 요청 URL을 콘솔에 출력 (URL 인코딩 적용)**
+        const requestURL = `${api_url}?${querystring.stringify(requestParams)}`;
         console.log(`🔍 실제 API 요청 URL: ${requestURL}`);
 
-        // ✅ **axios로 API 요청**
+        // ✅ **axios로 API 요청 (쿼리스트링 자동 적용)**
         const response = await axios.get(api_url, {
             params: requestParams,
+            paramsSerializer: (params) => querystring.stringify(params), // ✅ URL 인코딩 적용
             responseType: "arraybuffer",
         });
 
