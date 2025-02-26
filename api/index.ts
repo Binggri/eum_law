@@ -3,10 +3,14 @@ import axios from "axios";
 
 const app: Application = express();
 
-app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {  // ✅ Vercel에 맞게 경로 수정
-    console.log("API 요청이 들어왔습니다:", req.query);
+// ✅ API 기본 URL (`?` 추가하여 쿼리스트링이 자동으로 붙도록 설정)
+const api_url = "https://api.eum.go.kr/web/Rest/OP/searchZone?";
+
+app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
+    console.log("✅ API 요청이 들어왔습니다:", req.query);
 
     try {
+        // ✅ 요청 파라미터 받기
         const { areaCd, type, uname } = req.query;
 
         if (!areaCd || !type) {
@@ -17,8 +21,10 @@ app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {  // 
 
         console.log(`✅ 요청 처리 중... (areaCd: ${areaCd}, type: ${type}, uname: ${uname})`);
 
-        const api_url = "https://api.eum.go.kr/web/Rest/OP/searchZone";
+        // ✅ 실제 요청 URL 로그 출력 (디버깅용)
+        console.log("🔍 요청 URL:", `${api_url}id=ybg&key=Wj0PNO4WCAAsndHQkqLz5A==&areaCd=${areaCd}&type=${type}&uname=${uname}`);
 
+        // ✅ API 요청 실행
         const response = await axios.get(api_url, {
             params: {
                 id: "ybg",
@@ -44,5 +50,5 @@ app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {  // 
     }
 });
 
-// ✅ Vercel에서는 `app.listen(3000, ...)`을 사용하지 않음
+// ✅ Vercel 배포용 (`app.listen` 사용 X)
 export default app;
