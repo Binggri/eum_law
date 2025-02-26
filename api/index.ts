@@ -3,14 +3,13 @@ import axios from "axios";
 
 const app: Application = express();
 
-// ✅ API 기본 URL (`?` 추가하여 쿼리스트링이 자동으로 붙도록 설정)
 const api_url = "https://api.eum.go.kr/web/Rest/OP/searchZone?";
 
 app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
     console.log("✅ API 요청이 들어왔습니다:", req.query);
 
     try {
-        // ✅ 요청 파라미터 받기
+        // ✅ 요청 파라미터 확인
         const { areaCd, type, uname } = req.query;
 
         if (!areaCd || !type) {
@@ -19,10 +18,9 @@ app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        console.log(`✅ 요청 처리 중... (areaCd: ${areaCd}, type: ${type}, uname: ${uname})`);
-
-        // ✅ 실제 요청 URL 로그 출력 (디버깅용)
-        console.log("🔍 요청 URL:", `${api_url}id=ybg&key=Wj0PNO4WCAAsndHQkqLz5A==&areaCd=${areaCd}&type=${type}&uname=${uname}`);
+        // ✅ 실제 요청 URL을 로그로 출력하여 확인 (디버깅용)
+        const requestUrl = `${api_url}id=ybg&key=Wj0PNO4WCAAsndHQkqLz5A==&areaCd=${areaCd}&type=${type}&uname=${uname || ""}`;
+        console.log("🔍 실제 API 요청 URL:", requestUrl);
 
         // ✅ API 요청 실행
         const response = await axios.get(api_url, {
@@ -31,7 +29,7 @@ app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
                 key: "Wj0PNO4WCAAsndHQkqLz5A==",
                 areaCd,
                 type,
-                uname,
+                uname: uname || "", // 선택적 파라미터 처리
             },
             responseType: "arraybuffer",
         });
