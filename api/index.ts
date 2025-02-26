@@ -3,8 +3,6 @@ import axios from "axios";
 
 const app: Application = express();
 
-const api_url = "https://api.eum.go.kr/web/Rest/OP/searchZone?";
-
 app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
     console.log("✅ API 요청이 들어왔습니다:", req.query);
 
@@ -20,18 +18,27 @@ app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
 
         console.log(`✅ 요청 처리 중... (areaCd: ${areaCd}, type: ${type}, uname: ${uname})`);
 
-        // ✅ API 요청 URL을 동적으로 생성
-        let requestUrl = `${api_url}id=ybg&key=Wj0PNO4WCAAsndHQkqLz5A==&areaCd=${areaCd}&type=${type}`;
+        // ✅ API 기본 URL
+        const api_url = "https://api.eum.go.kr/web/Rest/OP/searchZone?";
 
-        // ✅ `uname`이 존재할 경우에만 추가
+        // ✅ 요청 파라미터 설정 (`uname`이 없으면 제외)
+        const requestParams: any = {
+            id: "ybg",
+            key: "Wj0PNO4WCAAsndHQkqLz5A==",
+            areaCd: areaCd,
+            type: type,
+        };
+
         if (uname) {
-            requestUrl += `&uname=${uname}`;
+            requestParams.uname = uname;  // ✅ `uname` 값이 있을 경우만 추가
         }
 
-        console.log("🔍 실제 API 요청 URL:", requestUrl);
+        // ✅ 디버깅을 위한 API 요청 URL 로그 출력
+        console.log("🔍 실제 API 요청 URL:", api_url, requestParams);
 
         // ✅ API 요청 실행
-        const response = await axios.get(requestUrl, {
+        const response = await axios.get(api_url, {
+            params: requestParams,
             responseType: "arraybuffer",
         });
 
@@ -47,4 +54,9 @@ app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
         console.error("❌ API 요청 중 오류 발생:", error.response?.status || error.message);
         res.status(error.response?.status || 500).send("API 요청 실패");
     }
+});
+
+// ✅ 서버 실행 (포트: 3000)
+app.listen(3000, () => {
+    console.log("🚀 서버가 3000번 포트에서 실행 중입니다.");
 });
