@@ -1,11 +1,4 @@
-﻿import express, { Request, Response, Application } from "express";
-import axios from "axios";
-
-const app: Application = express();
-app.use(express.json()); // ✅ JSON 요청 처리 추가
-
-// ✅ API 라우트 `/api/eum` 추가
-app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
+﻿app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
     console.log("✅ API 요청이 들어왔습니다:", req.query);
 
     try {
@@ -25,10 +18,10 @@ app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
             key: "Wj0PNO4WCAAsndHQkqLz5A==",
             areaCd,
             type,
-            uname,
+            uname: uname || "", // uname이 없을 경우 빈 문자열 전달
         };
 
-        // ✅ 🔍 실제 API 요청 URL을 콘솔에 출력
+        // ✅ **🔍 실제 API 요청 URL을 콘솔에 출력**
         const requestURL = `${api_url}?id=${requestParams.id}&key=${requestParams.key}&areaCd=${requestParams.areaCd}&type=${requestParams.type}&uname=${requestParams.uname}`;
         console.log(`🔍 실제 API 요청 URL: ${requestURL}`);
 
@@ -51,8 +44,4 @@ app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
         res.status(error.response?.status || 500).send("API 요청 실패");
         return;
     }
-});
-
-app.listen(3000, () => {
-    console.log("🚀 서버가 3000번 포트에서 실행 중입니다.");
 });
