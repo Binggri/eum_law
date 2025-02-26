@@ -2,8 +2,10 @@
 import axios from "axios";
 
 const app: Application = express();
+app.use(express.json()); // ✅ JSON 요청 처리 추가
 
-app.get("/eum", async (req: Request, res: Response): Promise<void> => {
+// ✅ API 라우트 `/api/eum` 추가
+app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
     console.log("✅ API 요청이 들어왔습니다:", req.query);
 
     try {
@@ -18,7 +20,6 @@ app.get("/eum", async (req: Request, res: Response): Promise<void> => {
         console.log(`✅ 요청 처리 중... (areaCd: ${areaCd}, type: ${type}, uname: ${uname})`);
 
         const api_url = "https://api.eum.go.kr/web/Rest/OP/searchZone";
-
         const requestParams = {
             id: "ybg",
             key: "Wj0PNO4WCAAsndHQkqLz5A==",
@@ -27,7 +28,7 @@ app.get("/eum", async (req: Request, res: Response): Promise<void> => {
             uname,
         };
 
-        // ✅ 🔍 실제 API 요청 URL을 콘솔에 출력 (Vercel 로그에서 확인 가능)
+        // ✅ 🔍 실제 API 요청 URL을 콘솔에 출력
         const requestURL = `${api_url}?id=${requestParams.id}&key=${requestParams.key}&areaCd=${requestParams.areaCd}&type=${requestParams.type}&uname=${requestParams.uname}`;
         console.log(`🔍 실제 API 요청 URL: ${requestURL}`);
 
