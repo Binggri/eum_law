@@ -19,7 +19,7 @@ app.get("/api", async (req: Request, res: Response) => {
 
         const api_url = "https://api.eum.go.kr/web/Rest/OP/searchZone?";
 
-        // ✅ URLSearchParams를 사용하여 쿼리스트링 생성 (자동 인코딩)
+        // ✅ `URLSearchParams`를 사용하여 자동으로 URL 인코딩된 쿼리스트링 생성
         const requestParams = new URLSearchParams({
             id: "ybg",
             key: "Wj0PNO4WCAAsndHQkqLz5A==",
@@ -28,7 +28,7 @@ app.get("/api", async (req: Request, res: Response) => {
             uname: uname ? String(uname) : "", // uname이 없을 경우 빈 문자열 처리
         });
 
-        // ✅ 최종 API 요청 URL 생성 및 로그 출력
+        // ✅ 최종 API 요청 URL 출력
         const requestURL = `${api_url}${requestParams.toString()}`;
         console.log(`🔍 실제 API 요청 URL: ${requestURL}`);
 
