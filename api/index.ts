@@ -9,7 +9,7 @@ app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
     console.log("✅ API 요청이 들어왔습니다:", req.query);
 
     try {
-        // ✅ 요청 파라미터 확인
+        // ✅ 요청 파라미터 받기
         const { areaCd, type, uname } = req.query;
 
         if (!areaCd || !type) {
@@ -18,19 +18,20 @@ app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        // ✅ 실제 요청 URL을 로그로 출력하여 확인 (디버깅용)
-        const requestUrl = `${api_url}id=ybg&key=Wj0PNO4WCAAsndHQkqLz5A==&areaCd=${areaCd}&type=${type}&uname=${uname || ""}`;
+        console.log(`✅ 요청 처리 중... (areaCd: ${areaCd}, type: ${type}, uname: ${uname})`);
+
+        // ✅ API 요청 URL을 동적으로 생성
+        let requestUrl = `${api_url}id=ybg&key=Wj0PNO4WCAAsndHQkqLz5A==&areaCd=${areaCd}&type=${type}`;
+
+        // ✅ `uname`이 존재할 경우에만 추가
+        if (uname) {
+            requestUrl += `&uname=${uname}`;
+        }
+
         console.log("🔍 실제 API 요청 URL:", requestUrl);
 
         // ✅ API 요청 실행
-        const response = await axios.get(api_url, {
-            params: {
-                id: "ybg",
-                key: "Wj0PNO4WCAAsndHQkqLz5A==",
-                areaCd,
-                type,
-                uname: uname || "", // 선택적 파라미터 처리
-            },
+        const response = await axios.get(requestUrl, {
             responseType: "arraybuffer",
         });
 
@@ -47,6 +48,3 @@ app.get("/api/eum", async (req: Request, res: Response): Promise<void> => {
         res.status(error.response?.status || 500).send("API 요청 실패");
     }
 });
-
-// ✅ Vercel 배포용 (`app.listen` 사용 X)
-export default app;
